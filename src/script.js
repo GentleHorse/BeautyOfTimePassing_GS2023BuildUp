@@ -1,6 +1,9 @@
 import * as THREE from "three";
+import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { gsap } from "gsap";
 import Stats from "stats.js";
 
@@ -52,6 +55,9 @@ const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager);
  * Base =================================================================
  */
 // Debug
+const gui = new dat.GUI();
+
+// Debug
 const debugObject = {};
 
 // Canvas
@@ -59,6 +65,14 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+
+// AxesHelper
+const axesHelper = new THREE.AxesHelper(3);
+axesHelper.visible = false;
+const helperFolder = gui.addFolder("Helper");
+helperFolder.close();
+helperFolder.add(axesHelper, "visible");
+scene.add(axesHelper);
 
 /**
  * Overlay ==============================================================
@@ -126,44 +140,315 @@ scene.environment = environmentMap;
 debugObject.envMapIntensity = 0.5;
 
 /**
+ * Textures =============================================================================================
+ */
+
+// matcap texture
+// image dimension is 256px x 256px
+const matcapURLBase = "/textures/matcaps/";
+
+// -- text
+let matcapIndex = 3;
+const matcapImage = new Image();
+matcapImage.src = matcapURLBase + matcapIndex + ".png";
+
+const matcapTexture = new THREE.Texture(matcapImage);
+matcapImage.onload = () => {
+  matcapTexture.needsUpdate = true;
+};
+
+/**
+ * 3D Text ====================================================================
+ */
+const fontLoader = new FontLoader();
+
+fontLoader.load("/fonts/New_Walt_Disney_Font_Regular.json", (font) => {
+  const textGeometry = new TextGeometry("Beauty of Time Passing", {
+    font: font,
+    size: 0.2,
+    height: 0.2,
+    curveSegments: 5,
+    bevelEnabled: true,
+    bevelThickness: 0.03,
+    bevelSize: 0.02,
+    bevelOffset: 0,
+    bevelSegments: 4,
+  });
+
+  textGeometry.center();
+
+  const textMaterial = new THREE.MeshMatcapMaterial();
+  textMaterial.matcap = matcapTexture;
+  const text = new THREE.Mesh(textGeometry, textMaterial);
+  text.rotation.set(0, Math.PI, 0);
+  text.position.set(2.1, 1.6, 0.08);
+  const textFolder = gui.addFolder("3D Text");
+  textFolder.close();
+  textFolder.add(text.position, "x", -10, 10, 0.001).name("PosX");
+  textFolder.add(text.position, "y", -10, 10, 0.001).name("PosY");
+  textFolder.add(text.position, "z", -10, 10, 0.001).name("PosZ");
+  textFolder.add(text.rotation, "x", -Math.PI, Math.PI, 0.001).name("RotateX");
+  textFolder.add(text.rotation, "y", -Math.PI, Math.PI, 0.001).name("RotateY");
+  textFolder.add(text.rotation, "z", -Math.PI, Math.PI, 0.001).name("RotateZ");
+  scene.add(text);
+});
+
+/**
  * Models =====================================================================
  */
-gltfLoader.load("/models/BeautyOfTimePassing/glTF/BeautyOfTimePassing.gltf", (gltf) => {
-    gltf.scene.scale.set(0.1, 0.1, 0.1);
-    gltf.scene.rotation.y = Math.PI * 0.5;
-    scene.add(gltf.scene);
-  
-    updateAllMaterials();
-  });
+const gltfModelParams = {};
+gltfModelParams.position = { x: 1.5, y: -1, z: 0 };
+
+const generateGltfModel = () => {
+  gltfLoader.load(
+    "/models/BeautyOfTimePassing/glTF/BeautyOfTimePassing.gltf",
+    (gltf) => {
+      gltf.scene.scale.set(0.1, 0.1, 0.1);
+      gltf.scene.position.set(
+        gltfModelParams.position.x,
+        gltfModelParams.position.y,
+        gltfModelParams.position.z
+      );
+      gltf.scene.rotation.y = Math.PI * 0.5;
+      scene.add(gltf.scene);
+
+      updateAllMaterials();
+    }
+  );
+};
+
+generateGltfModel();
 
 /**
  * Points of interest ==========================================================
  */
+
 const raycaster = new THREE.Raycaster();
+
+const pointsOfInterestLocationsParams = {
+  pointsOfInterest_00: { x: 1.55, y: 0.3, z: -0.6 },
+  pointsOfInterest_01: { x: 0.5, y: 0.8, z: -1.6 },
+  pointsOfInterest_02: { x: 1.6, y: -0.3, z: -0.7 },
+  pointsOfInterest_03: { x: -0.7, y: 0.3, z: -0.9 },
+  pointsOfInterest_04: { x: -0.7, y: 0.4, z: -1.8 },
+};
+
+// test meshes
+const testMesh_00 = new THREE.Mesh(
+  new THREE.SphereGeometry(0.03, 10, 10),
+  new THREE.MeshNormalMaterial()
+);
+testMesh_00.position.set(
+  pointsOfInterestLocationsParams.pointsOfInterest_00.x,
+  pointsOfInterestLocationsParams.pointsOfInterest_00.y,
+  pointsOfInterestLocationsParams.pointsOfInterest_00.z
+);
+scene.add(testMesh_00);
+
+const testMesh_01 = new THREE.Mesh(
+  new THREE.SphereGeometry(0.03, 10, 10),
+  new THREE.MeshNormalMaterial()
+);
+testMesh_01.position.set(
+  pointsOfInterestLocationsParams.pointsOfInterest_01.x,
+  pointsOfInterestLocationsParams.pointsOfInterest_01.y,
+  pointsOfInterestLocationsParams.pointsOfInterest_01.z
+);
+scene.add(testMesh_01);
+
+const testMesh_02 = new THREE.Mesh(
+  new THREE.SphereGeometry(0.03, 10, 10),
+  new THREE.MeshNormalMaterial()
+);
+testMesh_02.position.set(
+  pointsOfInterestLocationsParams.pointsOfInterest_02.x,
+  pointsOfInterestLocationsParams.pointsOfInterest_02.y,
+  pointsOfInterestLocationsParams.pointsOfInterest_02.z
+);
+scene.add(testMesh_02);
+
+const testMesh_03 = new THREE.Mesh(
+  new THREE.SphereGeometry(0.03, 10, 10),
+  new THREE.MeshNormalMaterial()
+);
+testMesh_03.position.set(
+  pointsOfInterestLocationsParams.pointsOfInterest_03.x,
+  pointsOfInterestLocationsParams.pointsOfInterest_03.y,
+  pointsOfInterestLocationsParams.pointsOfInterest_03.z
+);
+scene.add(testMesh_03);
+
+const testMesh_04 = new THREE.Mesh(
+  new THREE.SphereGeometry(0.03, 10, 10),
+  new THREE.MeshNormalMaterial()
+);
+testMesh_04.position.set(
+  pointsOfInterestLocationsParams.pointsOfInterest_04.x,
+  pointsOfInterestLocationsParams.pointsOfInterest_04.y,
+  pointsOfInterestLocationsParams.pointsOfInterest_04.z
+);
+scene.add(testMesh_04);
+
+// points of interests
+const offset = 0.1;
 const points = [
   {
-    position: new THREE.Vector3(1.55, 0.3, -0.6),
+    position: new THREE.Vector3(
+      pointsOfInterestLocationsParams.pointsOfInterest_00.x + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_00.y + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_00.z + offset
+    ),
     element: document.querySelector(".point-0"),
   },
   {
-    position: new THREE.Vector3(0.5, 0.8, -1.6),
+    position: new THREE.Vector3(
+      pointsOfInterestLocationsParams.pointsOfInterest_01.x + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_01.y + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_01.z + offset
+    ),
     element: document.querySelector(".point-1"),
   },
   {
-    position: new THREE.Vector3(1.6, -1.3, -0.7),
+    position: new THREE.Vector3(
+      pointsOfInterestLocationsParams.pointsOfInterest_02.x + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_02.y + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_02.z + offset
+    ),
     element: document.querySelector(".point-2"),
   },
+  {
+    position: new THREE.Vector3(
+      pointsOfInterestLocationsParams.pointsOfInterest_03.x + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_03.y + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_03.z + offset
+    ),
+    element: document.querySelector(".point-3"),
+  },
+  {
+    position: new THREE.Vector3(
+      pointsOfInterestLocationsParams.pointsOfInterest_04.x + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_04.y + offset,
+      pointsOfInterestLocationsParams.pointsOfInterest_04.z + offset
+    ),
+    element: document.querySelector(".point-4"),
+  },
 ];
+
+// GUI
+const pointsOfInterestLocationFolder_00 = gui.addFolder("pointsOfInterest_00");
+pointsOfInterestLocationFolder_00.close();
+pointsOfInterestLocationFolder_00
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_00, "x", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_00.position.x =
+      pointsOfInterestLocationsParams.pointsOfInterest_00.x;
+  });
+pointsOfInterestLocationFolder_00
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_00, "y", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_00.position.y =
+      pointsOfInterestLocationsParams.pointsOfInterest_00.y;
+  });
+pointsOfInterestLocationFolder_00
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_00, "z", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_00.position.z =
+      pointsOfInterestLocationsParams.pointsOfInterest_00.z;
+  });
+
+const pointsOfInterestLocationFolder_01 = gui.addFolder("pointsOfInterest_01");
+pointsOfInterestLocationFolder_01.close();
+pointsOfInterestLocationFolder_01
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_01, "x", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_01.position.x =
+      pointsOfInterestLocationsParams.pointsOfInterest_01.x;
+  });
+pointsOfInterestLocationFolder_01
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_01, "y", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_01.position.y =
+      pointsOfInterestLocationsParams.pointsOfInterest_01.y;
+  });
+pointsOfInterestLocationFolder_01
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_01, "z", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_01.position.z =
+      pointsOfInterestLocationsParams.pointsOfInterest_01.z;
+  });
+
+const pointsOfInterestLocationFolder_02 = gui.addFolder("pointsOfInterest_02");
+pointsOfInterestLocationFolder_02.close();
+pointsOfInterestLocationFolder_02
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_02, "x", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_02.position.x =
+      pointsOfInterestLocationsParams.pointsOfInterest_02.x;
+  });
+pointsOfInterestLocationFolder_02
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_02, "y", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_02.position.y =
+      pointsOfInterestLocationsParams.pointsOfInterest_02.y;
+  });
+pointsOfInterestLocationFolder_02
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_02, "z", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_02.position.z =
+      pointsOfInterestLocationsParams.pointsOfInterest_02.z;
+  });
+
+const pointsOfInterestLocationFolder_03 = gui.addFolder("pointsOfInterest_03");
+pointsOfInterestLocationFolder_03.close();
+pointsOfInterestLocationFolder_03
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_03, "x", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_03.position.x =
+      pointsOfInterestLocationsParams.pointsOfInterest_03.x;
+  });
+pointsOfInterestLocationFolder_03
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_03, "y", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_03.position.y =
+      pointsOfInterestLocationsParams.pointsOfInterest_03.y;
+  });
+pointsOfInterestLocationFolder_03
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_03, "z", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_03.position.z =
+      pointsOfInterestLocationsParams.pointsOfInterest_03.z;
+  });
+
+const pointsOfInterestLocationFolder_04 = gui.addFolder("pointsOfInterest_04");
+pointsOfInterestLocationFolder_04.close();
+pointsOfInterestLocationFolder_04
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_04, "x", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_04.position.x =
+      pointsOfInterestLocationsParams.pointsOfInterest_04.x;
+  });
+pointsOfInterestLocationFolder_04
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_04, "y", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_04.position.y =
+      pointsOfInterestLocationsParams.pointsOfInterest_04.y;
+  });
+pointsOfInterestLocationFolder_04
+  .add(pointsOfInterestLocationsParams.pointsOfInterest_04, "z", -10, 10, 0.001)
+  .onChange(() => {
+    testMesh_04.position.z =
+      pointsOfInterestLocationsParams.pointsOfInterest_04.z;
+  });
 
 /**
  * Lights ======================================================================
  */
-const directionalLight = new THREE.DirectionalLight("#ffffff", 3);
-directionalLight.castShadow = true;
-directionalLight.shadow.camera.far = 15;
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.normalBias = 0.05;
-directionalLight.position.set(0.25, 3, -2.25);
+// const directionalLight = new THREE.DirectionalLight("#ffffff", 3);
+// directionalLight.castShadow = true;
+// directionalLight.shadow.camera.far = 15;
+// directionalLight.shadow.mapSize.set(1024, 1024);
+// directionalLight.shadow.normalBias = 0.05;
+// directionalLight.position.set(0.25, 3, -2.25);
 // scene.add(directionalLight);
 
 /**
@@ -198,12 +483,19 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(4, 1, -4);
+camera.position.set(4, 0.166, -1.8);
 scene.add(camera);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
+
+// GUI
+const cameraFolder = gui.addFolder("camera");
+cameraFolder.close();
+cameraFolder.add(camera.position, "x", -10, 10, 0.001);
+cameraFolder.add(camera.position, "y", -10, 10, 0.001);
+cameraFolder.add(camera.position, "z", -10, 10, 0.001);
 
 /**
  * Renderer ====================================================================
@@ -267,3 +559,42 @@ const tick = () => {
 };
 
 tick();
+
+/**
+ * Texture switch with keyboards =======================================================================
+ */
+
+document.addEventListener("keydown", (e) => {
+  switch (event.keyCode) {
+    case 65: // a
+    case 37: // left arrow
+      if (matcapIndex !== 1) {
+        matcapIndex--;
+        matcapImage.src = matcapURLBase + matcapIndex + ".png";
+        console.log((matcapImage.src = matcapURLBase + matcapIndex + ".png"));
+        break;
+      } else {
+        matcapIndex = 12;
+        matcapImage.src = matcapURLBase + matcapIndex + ".png";
+        console.log((matcapImage.src = matcapURLBase + matcapIndex + ".png"));
+        break;
+      }
+
+    case 68: // d
+    case 39: //right arrow
+      if (matcapIndex !== 12) {
+        matcapIndex++;
+        matcapImage.src = matcapURLBase + matcapIndex + ".png";
+        console.log((matcapImage.src = matcapURLBase + matcapIndex + ".png"));
+        break;
+      } else {
+        matcapIndex = 1;
+        matcapImage.src = matcapURLBase + matcapIndex + ".png";
+        console.log((matcapImage.src = matcapURLBase + matcapIndex + ".png"));
+        break;
+      }
+
+    default:
+      break;
+  }
+});
