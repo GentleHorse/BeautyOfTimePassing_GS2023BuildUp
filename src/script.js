@@ -226,11 +226,11 @@ generateGltfModel();
 const raycaster = new THREE.Raycaster();
 
 const pointsOfInterestLocationsParams = {
-  pointsOfInterest_00: { x: 1.55, y: 0.3, z: -0.6 },
-  pointsOfInterest_01: { x: 0.5, y: 0.8, z: -1.6 },
-  pointsOfInterest_02: { x: 1.6, y: -0.3, z: -0.7 },
-  pointsOfInterest_03: { x: -0.7, y: 0.3, z: -0.9 },
-  pointsOfInterest_04: { x: -0.7, y: 0.4, z: -1.8 },
+  pointsOfInterest_00: { x: 1.8, y: 0.3, z: -0.16 },
+  pointsOfInterest_01: { x: 0.82, y: 0.57, z: -0.65 },
+  pointsOfInterest_02: { x: 1.06, y: -0.3, z: -1.15 },
+  pointsOfInterest_03: { x: -1.15, y: -0.16, z: -2.6 },
+  pointsOfInterest_04: { x: -1.4, y: 0.1, z: -1.8 },
 };
 
 // test meshes
