@@ -3,6 +3,7 @@ import * as dat from "lil-gui";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { gsap } from "gsap";
 import Stats from "stats.js";
@@ -48,8 +49,17 @@ const loadingManager = new THREE.LoadingManager(
     loadingBarElement.style.transform = `scaleX(${progressRatio})`;
   }
 );
+
+// Draco loader
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("draco/");
+
 const gltfLoader = new GLTFLoader(loadingManager);
+gltfLoader.setDRACOLoader(dracoLoader);
+
 const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager);
+const textureLoader = new THREE.TextureLoader();
+
 
 /**
  * Base =================================================================
@@ -123,21 +133,21 @@ const updateAllMaterials = () => {
 /**
  * Environment map ==========================================================
  */
-const environmentMap = cubeTextureLoader.load([
-  "/textures/environmentMaps/0/px.jpg",
-  "/textures/environmentMaps/0/nx.jpg",
-  "/textures/environmentMaps/0/py.jpg",
-  "/textures/environmentMaps/0/ny.jpg",
-  "/textures/environmentMaps/0/pz.jpg",
-  "/textures/environmentMaps/0/nz.jpg",
-]);
+// const environmentMap = cubeTextureLoader.load([
+//   "/textures/environmentMaps/0/px.jpg",
+//   "/textures/environmentMaps/0/nx.jpg",
+//   "/textures/environmentMaps/0/py.jpg",
+//   "/textures/environmentMaps/0/ny.jpg",
+//   "/textures/environmentMaps/0/pz.jpg",
+//   "/textures/environmentMaps/0/nz.jpg",
+// ]);
 
-environmentMap.colorSpace = THREE.SRGBColorSpace;
+// environmentMap.colorSpace = THREE.SRGBColorSpace;
 
-// scene.background = environmentMap;
-scene.environment = environmentMap;
+// // scene.background = environmentMap;
+// scene.environment = environmentMap;
 
-debugObject.envMapIntensity = 0.5;
+// debugObject.envMapIntensity = 0;
 
 /**
  * Textures =============================================================================================
@@ -156,6 +166,10 @@ const matcapTexture = new THREE.Texture(matcapImage);
 matcapImage.onload = () => {
   matcapTexture.needsUpdate = true;
 };
+
+// texture for gltf model
+const bakedTexture = textureLoader.load('./models/BeautyOfTimePassing/baked.jpg');
+bakedTexture.flipY = false;
 
 /**
  * 3D Text ====================================================================
@@ -364,15 +378,18 @@ laptopScreenFolder_01
     laptopScreen_01.rotation.z = laptopScreenParams.screen_01.rotation_z;
   });
 
+
 /**
  * Models =====================================================================
  */
 const gltfModelParams = {};
 gltfModelParams.position = { x: 1.5, y: -1, z: 0 };
 
+const bakedMaterial = new THREE.MeshBasicMaterial({map: bakedTexture});
+
 const generateGltfModel = () => {
   gltfLoader.load(
-    "/models/BeautyOfTimePassing/glTF/BeautyOfTimePassing.gltf",
+    "/models/BeautyOfTimePassing/glb/BeautyOfTimePassing.glb",
     (gltf) => {
       gltf.scene.scale.set(0.1, 0.1, 0.1);
       gltf.scene.position.set(
@@ -381,6 +398,11 @@ const generateGltfModel = () => {
         gltfModelParams.position.z
       );
       gltf.scene.rotation.y = Math.PI * 0.5;
+
+      gltf.scene.traverse((child) => {
+        child.material = bakedMaterial;
+      })
+
       scene.add(gltf.scene);
 
       updateAllMaterials();
