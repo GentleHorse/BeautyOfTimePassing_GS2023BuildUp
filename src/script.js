@@ -60,7 +60,6 @@ gltfLoader.setDRACOLoader(dracoLoader);
 const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager);
 const textureLoader = new THREE.TextureLoader();
 
-
 /**
  * Base =================================================================
  */
@@ -168,8 +167,11 @@ matcapImage.onload = () => {
 };
 
 // texture for gltf model
-const bakedTexture = textureLoader.load('./models/BeautyOfTimePassing/baked.jpg');
+const bakedTexture = textureLoader.load(
+  "./models/BeautyOfTimePassing/baked.jpg"
+);
 bakedTexture.flipY = false;
+bakedTexture.colorSpace = THREE.SRGBColorSpace;
 
 /**
  * 3D Text ====================================================================
@@ -206,6 +208,63 @@ fontLoader.load("/fonts/New_Walt_Disney_Font_Regular.json", (font) => {
   textFolder.add(text.rotation, "z", -Math.PI, Math.PI, 0.001).name("RotateZ");
   scene.add(text);
 });
+
+/**
+ * Models =====================================================================
+ */
+const gltfModelParams = {};
+gltfModelParams.position = { x: 1.5, y: -1, z: 0 };
+
+// baked material
+const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture });
+
+// projector light material
+const projectorLightMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+
+// glass brick light material
+const glassBrickMaterial = new THREE.MeshBasicMaterial({ color: '#81C7D4' });
+
+const generateGltfModel = () => {
+  gltfLoader.load(
+    "/models/BeautyOfTimePassing/glb/BeautyOfTimePassing.glb",
+    (gltf) => {
+      gltf.scene.scale.set(0.1, 0.1, 0.1);
+      gltf.scene.position.set(
+        gltfModelParams.position.x,
+        gltfModelParams.position.y,
+        gltfModelParams.position.z
+      );
+      gltf.scene.rotation.y = Math.PI * 0.5;
+
+      gltf.scene.traverse((child) => {
+        child.material = bakedMaterial;
+        console.log(child);
+      });
+
+      const projectorLightAMesh = gltf.scene.children.find(
+        (child) => child.name === "projectorLightA"
+      );
+      const projectorLightBMesh = gltf.scene.children.find(
+        (child) => child.name === "projectorLightB"
+      );
+
+      projectorLightAMesh.material = projectorLightMaterial;
+      projectorLightBMesh.material = projectorLightMaterial;
+
+      gltf.scene.traverse((child) => {
+        if (child.name.match("glassBrickLight")){
+          child.material = glassBrickMaterial;
+        }
+      })
+
+      scene.add(gltf.scene);
+
+      updateAllMaterials();
+    }
+  );
+};
+
+generateGltfModel();
 
 /**
  * Laptop screens ==========================================================
@@ -377,40 +436,6 @@ laptopScreenFolder_01
   .onChange(() => {
     laptopScreen_01.rotation.z = laptopScreenParams.screen_01.rotation_z;
   });
-
-
-/**
- * Models =====================================================================
- */
-const gltfModelParams = {};
-gltfModelParams.position = { x: 1.5, y: -1, z: 0 };
-
-const bakedMaterial = new THREE.MeshBasicMaterial({map: bakedTexture});
-
-const generateGltfModel = () => {
-  gltfLoader.load(
-    "/models/BeautyOfTimePassing/glb/BeautyOfTimePassing.glb",
-    (gltf) => {
-      gltf.scene.scale.set(0.1, 0.1, 0.1);
-      gltf.scene.position.set(
-        gltfModelParams.position.x,
-        gltfModelParams.position.y,
-        gltfModelParams.position.z
-      );
-      gltf.scene.rotation.y = Math.PI * 0.5;
-
-      gltf.scene.traverse((child) => {
-        child.material = bakedMaterial;
-      })
-
-      scene.add(gltf.scene);
-
-      updateAllMaterials();
-    }
-  );
-};
-
-generateGltfModel();
 
 /**
  * Points of interest ==========================================================
