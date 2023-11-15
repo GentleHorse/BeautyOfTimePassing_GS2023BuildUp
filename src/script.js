@@ -55,7 +55,7 @@ const cubeTextureLoader = new THREE.CubeTextureLoader(loadingManager);
  * Base =================================================================
  */
 // Debug
-const gui = new dat.GUI();
+const gui = new dat.GUI({ width: 400 });
 
 // Debug
 const debugObject = {};
@@ -194,6 +194,177 @@ fontLoader.load("/fonts/New_Walt_Disney_Font_Regular.json", (font) => {
 });
 
 /**
+ * Laptop screens ==========================================================
+ */
+
+// handling video
+const clearVideo = document.createElement("video");
+clearVideo.src = "/videos/clear.mp4";
+clearVideo.crossOrigin = "Anonymous";
+clearVideo.loop = true;
+clearVideo.muted = true;
+clearVideo.play();
+const clearSceneryTexture = new THREE.VideoTexture(clearVideo);
+clearSceneryTexture.colorSpace = THREE.SRGBColorSpace;
+
+const rainVideo = document.createElement("video");
+rainVideo.src = "/videos/rain.mp4";
+rainVideo.crossOrigin = "Anonymous";
+rainVideo.loop = true;
+rainVideo.muted = true;
+rainVideo.play();
+const rainSceneryTexture = new THREE.VideoTexture(rainVideo);
+rainSceneryTexture.colorSpace = THREE.SRGBColorSpace;
+
+// params
+const laptopScreenParams = {
+  screen_00: {
+    video: clearSceneryTexture,
+    scale: 0.1,
+    position_x: -1.631,
+    position_y: -0.247,
+    position_z: -0.583,
+    rotation_x: 0,
+    rotation_y: 2.13,
+    rotation_z: 0,
+  },
+  screen_01: {
+    video: rainSceneryTexture,
+    scale: 0.1,
+    position_x: -1.44,
+    position_y: -0.247,
+    position_z: -2.419,
+    rotation_x: 0,
+    rotation_y: 2.13,
+    rotation_z: 0,
+  },
+};
+
+// laptop screens
+const laptopScreen_00 = new THREE.Mesh(
+  new THREE.PlaneGeometry(2.53, 1.65),
+  new THREE.MeshBasicMaterial({ map: laptopScreenParams.screen_00.video })
+);
+laptopScreen_00.scale.set(
+  laptopScreenParams.screen_00.scale,
+  laptopScreenParams.screen_00.scale,
+  laptopScreenParams.screen_00.scale
+);
+laptopScreen_00.position.set(
+  laptopScreenParams.screen_00.position_x,
+  laptopScreenParams.screen_00.position_y,
+  laptopScreenParams.screen_00.position_z
+);
+laptopScreen_00.rotation.set(
+  laptopScreenParams.screen_00.rotation_x,
+  laptopScreenParams.screen_00.rotation_y,
+  laptopScreenParams.screen_00.rotation_z
+);
+scene.add(laptopScreen_00);
+
+const laptopScreen_01 = new THREE.Mesh(
+  new THREE.PlaneGeometry(2.53, 1.65),
+  new THREE.MeshBasicMaterial({ map: laptopScreenParams.screen_01.video })
+);
+laptopScreen_01.scale.set(
+  laptopScreenParams.screen_01.scale,
+  laptopScreenParams.screen_01.scale,
+  laptopScreenParams.screen_01.scale
+);
+laptopScreen_01.position.set(
+  laptopScreenParams.screen_01.position_x,
+  laptopScreenParams.screen_01.position_y,
+  laptopScreenParams.screen_01.position_z
+);
+laptopScreen_01.rotation.set(
+  laptopScreenParams.screen_01.rotation_x,
+  laptopScreenParams.screen_01.rotation_y,
+  laptopScreenParams.screen_01.rotation_z
+);
+scene.add(laptopScreen_01);
+
+// GUI
+const laptopScreenFolder_00 = gui.addFolder("laptop_00");
+laptopScreenFolder_00.close();
+laptopScreenFolder_00
+  .add(laptopScreenParams.screen_00, "scale", 0, 1, 0.001)
+  .onChange(() => {
+    laptopScreen_00.scale.x = laptopScreenParams.screen_00.scale;
+    laptopScreen_00.scale.y = laptopScreenParams.screen_00.scale;
+    laptopScreen_00.scale.z = laptopScreenParams.screen_00.scale;
+  });
+laptopScreenFolder_00
+  .add(laptopScreenParams.screen_00, "position_x", -10, 10, 0.0001)
+  .onChange(() => {
+    laptopScreen_00.position.x = laptopScreenParams.screen_00.position_x;
+  });
+laptopScreenFolder_00
+  .add(laptopScreenParams.screen_00, "position_y", -10, 10, 0.0001)
+  .onChange(() => {
+    laptopScreen_00.position.y = laptopScreenParams.screen_00.position_y;
+  });
+laptopScreenFolder_00
+  .add(laptopScreenParams.screen_00, "position_z", -10, 10, 0.0001)
+  .onChange(() => {
+    laptopScreen_00.position.z = laptopScreenParams.screen_00.position_z;
+  });
+laptopScreenFolder_00
+  .add(laptopScreenParams.screen_00, "rotation_x", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_00.rotation.x = laptopScreenParams.screen_00.rotation_x;
+  });
+laptopScreenFolder_00
+  .add(laptopScreenParams.screen_00, "rotation_y", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_00.rotation.y = laptopScreenParams.screen_00.rotation_y;
+  });
+laptopScreenFolder_00
+  .add(laptopScreenParams.screen_00, "rotation_z", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_00.rotation.z = laptopScreenParams.screen_00.rotation_z;
+  });
+
+const laptopScreenFolder_01 = gui.addFolder("laptop_01");
+laptopScreenFolder_01.close();
+laptopScreenFolder_01
+  .add(laptopScreenParams.screen_01, "scale", 0, 1, 0.001)
+  .onChange(() => {
+    laptopScreen_01.scale.x = laptopScreenParams.screen_01.scale;
+    laptopScreen_01.scale.y = laptopScreenParams.screen_01.scale;
+    laptopScreen_01.scale.z = laptopScreenParams.screen_01.scale;
+  });
+laptopScreenFolder_01
+  .add(laptopScreenParams.screen_01, "position_x", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_01.position.x = laptopScreenParams.screen_01.position_x;
+  });
+laptopScreenFolder_01
+  .add(laptopScreenParams.screen_01, "position_y", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_01.position.y = laptopScreenParams.screen_01.position_y;
+  });
+laptopScreenFolder_01
+  .add(laptopScreenParams.screen_01, "position_z", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_01.position.z = laptopScreenParams.screen_01.position_z;
+  });
+laptopScreenFolder_01
+  .add(laptopScreenParams.screen_01, "rotation_x", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_01.rotation.x = laptopScreenParams.screen_01.rotation_x;
+  });
+laptopScreenFolder_01
+  .add(laptopScreenParams.screen_01, "rotation_y", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_01.rotation.y = laptopScreenParams.screen_01.rotation_y;
+  });
+laptopScreenFolder_01
+  .add(laptopScreenParams.screen_01, "rotation_z", -10, 10, 0.001)
+  .onChange(() => {
+    laptopScreen_01.rotation.z = laptopScreenParams.screen_01.rotation_z;
+  });
+
+/**
  * Models =====================================================================
  */
 const gltfModelParams = {};
@@ -229,8 +400,8 @@ const pointsOfInterestLocationsParams = {
   pointsOfInterest_00: { x: 1.8, y: 0.3, z: -0.16 },
   pointsOfInterest_01: { x: 0.82, y: 0.57, z: -0.65 },
   pointsOfInterest_02: { x: 1.06, y: -0.3, z: -1.15 },
-  pointsOfInterest_03: { x: -1.15, y: -0.16, z: -2.6 },
-  pointsOfInterest_04: { x: -1.4, y: 0.1, z: -1.8 },
+  pointsOfInterest_03: { x: -1.4, y: 0.1, z: -1.8 },
+  pointsOfInterest_04: { x: -1.15, y: -0.16, z: -2.6 },
 };
 
 // test meshes
@@ -483,7 +654,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(4, 0.166, -1.8);
+camera.position.set(3.595, 0.205, -3.054);
 scene.add(camera);
 
 // Controls
