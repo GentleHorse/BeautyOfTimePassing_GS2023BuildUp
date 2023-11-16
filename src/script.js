@@ -7,10 +7,10 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { gsap } from "gsap";
 import Stats from "stats.js";
-import glassBrickLightVertexShader from './shaders/glassBricks/vertex.glsl';
-import glassBrickLightFragmentShader from './shaders/glassBricks/fragment.glsl';
-
-
+import glassBrickLightVertexShader from "./shaders/glassBricks/vertex.glsl";
+import glassBrickLightFragmentShader from "./shaders/glassBricks/fragment.glsl";
+import projectorLightVertex from "./shaders/projector/vertex.glsl";
+import projectorLightFragment from "./shaders/projector/fragment.glsl";
 
 /**
  * Stats =======================================================
@@ -204,10 +204,24 @@ gltfModelParams.position = { x: 1.5, y: -1, z: 0 };
 const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture });
 
 // projector light material
-const projectorLightMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+const projectorLightMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0 },
+  },
+  vertexShader: projectorLightVertex,
+  fragmentShader: projectorLightFragment,
+});
 
 // glass brick light material
-const glassBrickMaterial = new THREE.MeshBasicMaterial({ color: '#81C7D4' });
+const glassBrickMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0 },
+    uColorStart: {value: new THREE.Color(0x1d62ed)},
+    uColorEnd: {value: new THREE.Color(0x039801)},
+  },
+  vertexShader: glassBrickLightVertexShader,
+  fragmentShader: glassBrickLightFragmentShader,
+});
 
 const generateGltfModel = () => {
   gltfLoader.load(
@@ -236,10 +250,10 @@ const generateGltfModel = () => {
       projectorLightBMesh.material = projectorLightMaterial;
 
       gltf.scene.traverse((child) => {
-        if (child.name.match("glassBrickLight")){
+        if (child.name.match("glassBrickLight")) {
           child.material = glassBrickMaterial;
         }
-      })
+      });
 
       scene.add(gltf.scene);
 
@@ -717,11 +731,19 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 /**
  * Animate =====================================================================
  */
+const clock = new THREE.Clock();
+
 const tick = () => {
   stats.begin();
 
+  const elapsedTime = clock.getElapsedTime();
+
   // Update controls
   controls.update();
+
+  // Update Shader Materials
+  glassBrickMaterial.uniforms.uTime.value = elapsedTime;
+  projectorLightMaterial.uniforms.uTime.value = elapsedTime;
 
   if (isSceneReady) {
     // Go through each point

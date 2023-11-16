@@ -1,6 +1,4 @@
 uniform float uTime;
-uniform vec3 uColorStart;
-uniform vec3 uColorEnd;
 
 varying vec2 vUv;
 
@@ -83,19 +81,10 @@ float cnoise(vec3 P)
 
 void main() {
     // displace the uv
-    vec2 displacedUv = vUv + cnoise(vec3(vUv * 10.0, uTime * 0.3)); 
+    vec2 displacedUv = vUv + cnoise(vec3(vUv * 5.0, uTime * 0.1)); 
 
     // perlin noise
-    float strength = cnoise(vec3(displacedUv * 10.0, uTime * 0.4));
+    float strength = cnoise(vec3(displacedUv * 5.0, uTime * 0.2));
 
-    // apply step
-    strength += step(-0.2, strength) * 0.8;
-
-    // clamp the value
-    strength = clamp(strength, 0.0, 1.0);
-
-    // final color
-    vec3 color = mix(uColorStart + displacedUv.x * 2.5, uColorEnd + displacedUv.y * 2.5, strength);
-
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(strength, strength, strength, 1.0);
 }
