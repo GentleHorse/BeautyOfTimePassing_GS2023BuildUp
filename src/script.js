@@ -7,6 +7,10 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { gsap } from "gsap";
 import Stats from "stats.js";
+import glassBrickLightVertexShader from './shaders/glassBricks/vertex.glsl';
+import glassBrickLightFragmentShader from './shaders/glassBricks/fragment.glsl';
+
+
 
 /**
  * Stats =======================================================
@@ -250,7 +254,7 @@ generateGltfModel();
  * Laptop screens ==========================================================
  */
 
-// handling video
+// handling scenery video
 const clearVideo = document.createElement("video");
 clearVideo.src = "/videos/clear.mp4";
 clearVideo.crossOrigin = "Anonymous";
