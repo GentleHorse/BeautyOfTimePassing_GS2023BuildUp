@@ -130,25 +130,6 @@ const updateAllMaterials = () => {
 };
 
 /**
- * Environment map ==========================================================
- */
-// const environmentMap = cubeTextureLoader.load([
-//   "/textures/environmentMaps/0/px.jpg",
-//   "/textures/environmentMaps/0/nx.jpg",
-//   "/textures/environmentMaps/0/py.jpg",
-//   "/textures/environmentMaps/0/ny.jpg",
-//   "/textures/environmentMaps/0/pz.jpg",
-//   "/textures/environmentMaps/0/nz.jpg",
-// ]);
-
-// environmentMap.colorSpace = THREE.SRGBColorSpace;
-
-// // scene.background = environmentMap;
-// scene.environment = environmentMap;
-
-// debugObject.envMapIntensity = 0;
-
-/**
  * Textures =============================================================================================
  */
 
@@ -178,10 +159,10 @@ bakedTexture.colorSpace = THREE.SRGBColorSpace;
  */
 const fontLoader = new FontLoader();
 
-fontLoader.load("/fonts/New_Walt_Disney_Font_Regular.json", (font) => {
+fontLoader.load("/fonts/Vollkorn_Regular.json", (font) => {
   const textGeometry = new TextGeometry("Beauty of Time Passing", {
     font: font,
-    size: 0.2,
+    size: 0.1,
     height: 0.2,
     curveSegments: 5,
     bevelEnabled: true,
@@ -236,11 +217,9 @@ const generateGltfModel = () => {
       );
       gltf.scene.rotation.y = Math.PI * 0.5;
 
-      gltf.scene.traverse((child) => {
-        child.material = bakedMaterial;
-        console.log(child);
-      });
-
+      const bakedMesh = gltf.scene.children.find(
+        (child) => child.name === "baked"
+      );
       const projectorLightAMesh = gltf.scene.children.find(
         (child) => child.name === "projectorLightA"
       );
@@ -248,6 +227,7 @@ const generateGltfModel = () => {
         (child) => child.name === "projectorLightB"
       );
 
+      bakedMesh.material = bakedMaterial;
       projectorLightAMesh.material = projectorLightMaterial;
       projectorLightBMesh.material = projectorLightMaterial;
 
