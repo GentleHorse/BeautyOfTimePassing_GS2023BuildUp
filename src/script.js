@@ -4,6 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import { gsap } from "gsap";
 import Stats from "stats.js";
@@ -11,6 +12,8 @@ import glassBrickLightVertexShader from "./shaders/glassBricks/vertex.glsl";
 import glassBrickLightFragmentShader from "./shaders/glassBricks/fragment.glsl";
 import projectorLightVertex from "./shaders/projector/vertex.glsl";
 import projectorLightFragment from "./shaders/projector/fragment.glsl";
+
+THREE.ColorManagement.enabled = false;
 
 /**
  * Stats =======================================================
@@ -158,6 +161,14 @@ const bakedTexture = textureLoader.load(
 bakedTexture.flipY = false;
 bakedTexture.colorSpace = THREE.SRGBColorSpace;
 
+// environment texture
+const hdrEquirect = new RGBELoader().load(
+  "./textures/environmentMaps/empty_warehouse_01_2k.hdr",
+  () => {
+    hdrEquirect.mapping = THREE.EquirectangularReflectionMapping;
+  }
+);
+
 /**
  * 3D Text ====================================================================
  */
@@ -212,12 +223,20 @@ const projectorLightMaterial = new THREE.ShaderMaterial({
   fragmentShader: projectorLightFragment,
 });
 
+// glass brick material
+const glassBrickMaterial = new THREE.MeshPhysicalMaterial({
+  roughness: 0.15,
+  transmission: 1,
+  thickness: 0.5,
+  envMap: hdrEquirect,
+});
+
 // glass brick light material
-const glassBrickMaterial = new THREE.ShaderMaterial({
+const glassBrickLightMaterial = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0 },
-    uColorStart: {value: new THREE.Color(0x1d62ed)},
-    uColorEnd: {value: new THREE.Color(0x039801)},
+    uColorStart: { value: new THREE.Color(0x1d62ed) },
+    uColorEnd: { value: new THREE.Color(0x039801) },
   },
   vertexShader: glassBrickLightVertexShader,
   fragmentShader: glassBrickLightFragmentShader,
@@ -225,7 +244,7 @@ const glassBrickMaterial = new THREE.ShaderMaterial({
 
 const generateGltfModel = () => {
   gltfLoader.load(
-    "/models/BeautyOfTimePassing/glb/BeautyOfTimePassing.glb",
+    "/models/BeautyOfTimePassingNew/bakedWithoutGlassBricks/glb/BeautyOfTimePassing.glb",
     (gltf) => {
       gltf.scene.scale.set(0.1, 0.1, 0.1);
       gltf.scene.position.set(
@@ -248,12 +267,6 @@ const generateGltfModel = () => {
       bakedMesh.material = bakedMaterial;
       projectorLightAMesh.material = projectorLightMaterial;
       projectorLightBMesh.material = projectorLightMaterial;
-
-      gltf.scene.traverse((child) => {
-        if (child.name.match("glassBrickLight")) {
-          child.material = glassBrickMaterial;
-        }
-      });
 
       scene.add(gltf.scene);
 
@@ -434,6 +447,99 @@ laptopScreenFolder_01
   .onChange(() => {
     laptopScreen_01.rotation.z = laptopScreenParams.screen_01.rotation_z;
   });
+
+/**
+ * Glass Bricks ==========================================================
+ */
+const glassBrickParams = {
+  scale: 0.099,
+  size: {
+    width: 0.8,
+    length: 1.9,
+    depth: 0.9,
+  },
+};
+const glassBrickGeometry = new THREE.BoxGeometry(
+  glassBrickParams.size.width,
+  glassBrickParams.size.length,
+  glassBrickParams.size.depth
+)
+
+// group 00
+let glassBrickGroupPosition_00 = 0;
+let glassBricksMeshGroup_00 = new THREE.Group();
+scene.add(glassBricksMeshGroup_00);
+for (let i = 0; i < 10; i++) {
+  const glassBrickMesh = new THREE.Mesh(
+    glassBrickGeometry,
+    glassBrickMaterial
+  );
+  glassBrickMesh.scale.set(
+    glassBrickParams.scale,
+    glassBrickParams.scale,
+    glassBrickParams.scale
+  );
+  glassBrickMesh.position.set(0, glassBrickGroupPosition_00, 0);
+  glassBricksMeshGroup_00.add(glassBrickMesh);
+
+  glassBrickGroupPosition_00 += glassBrickParams.size.length * 1.03 * glassBrickParams.scale;
+}
+
+glassBricksMeshGroup_00.position.set(1.5, -0.9, 0);
+
+const glassBricksFolder_00 = gui.addFolder("glassBricks_00");
+glassBricksFolder_00.close();
+glassBricksFolder_00
+  .add(glassBricksMeshGroup_00.position, "x", -10, 10, 0.001)
+  .name("posX");
+glassBricksFolder_00
+  .add(glassBricksMeshGroup_00.position, "y", -10, 10, 0.001)
+  .name("posY");
+glassBricksFolder_00
+  .add(glassBricksMeshGroup_00.position, "z", -10, 10, 0.001)
+  .name("posZ");
+glassBricksFolder_00
+  .add(glassBricksMeshGroup_00.rotation, "y", 0, Math.PI, 0.001)
+  .name("rotate");
+
+// group 01
+let glassBrickGroupPosition_01 = 0;
+let glassBricksMeshGroup_01 = new THREE.Group();
+scene.add(glassBricksMeshGroup_01);
+for (let i = 0; i < 10; i++) {
+  const glassBrickMesh = new THREE.Mesh(
+    glassBrickGeometry,
+    glassBrickMaterial
+  );
+  glassBrickMesh.scale.set(
+    glassBrickParams.scale,
+    glassBrickParams.scale,
+    glassBrickParams.scale
+  );
+  glassBrickMesh.position.set(0, glassBrickGroupPosition_01, 0);
+  glassBricksMeshGroup_01.add(glassBrickMesh);
+
+  glassBrickGroupPosition_01 += glassBrickParams.size.length * 1.03 * glassBrickParams.scale;
+}
+
+glassBricksMeshGroup_01.position.set(0.597, -0.9, -0.654);
+glassBricksMeshGroup_01.rotation.y = 2.736;
+
+const glassBricksFolder_01 = gui.addFolder("glassBricks_01");
+glassBricksFolder_01.close();
+glassBricksFolder_01
+  .add(glassBricksMeshGroup_01.position, "x", -10, 10, 0.001)
+  .name("posX");
+glassBricksFolder_01
+  .add(glassBricksMeshGroup_01.position, "y", -10, 10, 0.001)
+  .name("posY");
+glassBricksFolder_01
+  .add(glassBricksMeshGroup_01.position, "z", -10, 10, 0.001)
+  .name("posZ");
+glassBricksFolder_01
+  .add(glassBricksMeshGroup_01.rotation, "y", 0, Math.PI, 0.001)
+  .name("rotate");
+
 
 /**
  * Points of interest ==========================================================
@@ -659,13 +765,13 @@ pointsOfInterestLocationFolder_04
 /**
  * Lights ======================================================================
  */
-// const directionalLight = new THREE.DirectionalLight("#ffffff", 3);
-// directionalLight.castShadow = true;
-// directionalLight.shadow.camera.far = 15;
-// directionalLight.shadow.mapSize.set(1024, 1024);
-// directionalLight.shadow.normalBias = 0.05;
-// directionalLight.position.set(0.25, 3, -2.25);
-// scene.add(directionalLight);
+const directionalLight = new THREE.DirectionalLight("#ffffff", 3);
+directionalLight.castShadow = true;
+directionalLight.shadow.camera.far = 15;
+directionalLight.shadow.mapSize.set(1024, 1024);
+directionalLight.shadow.normalBias = 0.05;
+directionalLight.position.set(0.25, 3, -2.25);
+scene.add(directionalLight);
 
 /**
  * Sizes =======================================================================
@@ -720,6 +826,7 @@ const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
 });
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.useLegacyLights = false;
 renderer.toneMapping = THREE.ReinhardToneMapping;
 renderer.toneMappingExposure = 3;
@@ -742,7 +849,7 @@ const tick = () => {
   controls.update();
 
   // Update Shader Materials
-  glassBrickMaterial.uniforms.uTime.value = elapsedTime;
+  glassBrickLightMaterial.uniforms.uTime.value = elapsedTime;
   projectorLightMaterial.uniforms.uTime.value = elapsedTime;
 
   if (isSceneReady) {
