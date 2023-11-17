@@ -169,6 +169,10 @@ const hdrEquirect = new RGBELoader().load(
   }
 );
 
+// normal texture for glass bricks
+const golfNormalTexture = textureLoader.load('/textures/glassNormal/golfball.jpeg');
+const roughNormalTexture = textureLoader.load('/textures/glassNormal/organic.jpeg');
+
 /**
  * 3D Text ====================================================================
  */
@@ -225,11 +229,12 @@ const projectorLightMaterial = new THREE.ShaderMaterial({
 
 // glass brick material
 const glassBrickMaterial = new THREE.MeshPhysicalMaterial({
-  roughness: 0.15,
+  roughness: 0.3,
   transmission: 1,
-  thickness: 0.5,
+  thickness: 1.5,
   envMap: hdrEquirect,
   side: THREE.DoubleSide,
+  normalMap: roughNormalTexture,
 });
 
 // glass brick light material
@@ -264,10 +269,14 @@ const generateGltfModel = () => {
       const projectorLightBMesh = gltf.scene.children.find(
         (child) => child.name === "projectorLightB"
       );
+      const glassBrickLightMesh = gltf.scene.children.find(
+        (child) => child.name === "glassBrickLights"
+      );
 
       bakedMesh.material = bakedMaterial;
       projectorLightAMesh.material = projectorLightMaterial;
       projectorLightBMesh.material = projectorLightMaterial;
+      glassBrickLightMesh.material = glassBrickLightMaterial;
 
       scene.add(gltf.scene);
 
