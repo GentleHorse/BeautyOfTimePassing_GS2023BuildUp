@@ -95,7 +95,7 @@ void main() {
     strength = clamp(strength, 0.0, 1.0);
 
     // final color
-    vec3 color = mix(uColorStart + displacedUv.x * 2.5, uColorEnd + displacedUv.y * 2.5, strength);
+    vec3 color = mix(uColorStart + displacedUv.x * 1.5, uColorEnd + displacedUv.y * 1.5, strength);
 
     gl_FragColor = vec4(color, 1.0);
 }

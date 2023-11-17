@@ -13,7 +13,6 @@ import glassBrickLightFragmentShader from "./shaders/glassBricks/fragment.glsl";
 import projectorLightVertex from "./shaders/projector/vertex.glsl";
 import projectorLightFragment from "./shaders/projector/fragment.glsl";
 
-THREE.ColorManagement.enabled = false;
 
 /**
  * Stats =======================================================
@@ -72,6 +71,7 @@ const textureLoader = new THREE.TextureLoader();
  */
 // Debug
 const gui = new dat.GUI({ width: 400 });
+gui.close();
 
 // Debug
 const debugObject = {};
@@ -170,8 +170,7 @@ const hdrEquirect = new RGBELoader().load(
 );
 
 // normal texture for glass bricks
-const golfNormalTexture = textureLoader.load('/textures/glassNormal/golfball.jpeg');
-const roughNormalTexture = textureLoader.load('/textures/glassNormal/organic.jpeg');
+const organicNormalTexture = textureLoader.load('/textures/glassNormal/organic_02.jpg');
 
 /**
  * 3D Text ====================================================================
@@ -222,6 +221,8 @@ const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture });
 const projectorLightMaterial = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0 },
+    uColorStart: { value: new THREE.Color(0x027a00) },
+    uColorEnd: { value: new THREE.Color(0x1b9dee) },
   },
   vertexShader: projectorLightVertex,
   fragmentShader: projectorLightFragment,
@@ -230,19 +231,19 @@ const projectorLightMaterial = new THREE.ShaderMaterial({
 // glass brick material
 const glassBrickMaterial = new THREE.MeshPhysicalMaterial({
   roughness: 0.3,
-  transmission: 1,
+  transmission: 0.8,
   thickness: 1.5,
   envMap: hdrEquirect,
   side: THREE.DoubleSide,
-  normalMap: roughNormalTexture,
+  normalMap: organicNormalTexture,
 });
 
 // glass brick light material
 const glassBrickLightMaterial = new THREE.ShaderMaterial({
   uniforms: {
     uTime: { value: 0 },
-    uColorStart: { value: new THREE.Color(0x1d62ed) },
-    uColorEnd: { value: new THREE.Color(0x039801) },
+    uColorStart: { value: new THREE.Color(0x027a00) },
+    uColorEnd: { value: new THREE.Color(0x1b9dee) },
   },
   vertexShader: glassBrickLightVertexShader,
   fragmentShader: glassBrickLightFragmentShader,
@@ -558,109 +559,109 @@ glassBricksFolder_01
 const raycaster = new THREE.Raycaster();
 
 const pointsOfInterestLocationsParams = {
-  pointsOfInterest_00: { x: 1.8, y: 0.3, z: -0.16 },
+  pointsOfInterest_00: { x: 2.0, y: 0.3, z: -0.05 },
   pointsOfInterest_01: { x: 0.82, y: 0.57, z: -0.65 },
-  pointsOfInterest_02: { x: 1.06, y: -0.3, z: -1.15 },
-  pointsOfInterest_03: { x: -1.4, y: 0.1, z: -1.8 },
-  pointsOfInterest_04: { x: -1.15, y: -0.16, z: -2.6 },
+  pointsOfInterest_02: { x: 1.06, y: 0.35, z: -1.5 },
+  pointsOfInterest_03: { x: -1.49, y: 0.056, z: -2.01 },
+  pointsOfInterest_04: { x: -1.36, y: -0.316, z: -2.403 },
 };
 
 // test meshes
-const testMesh_00 = new THREE.Mesh(
-  new THREE.SphereGeometry(0.03, 10, 10),
-  new THREE.MeshNormalMaterial()
-);
-testMesh_00.position.set(
-  pointsOfInterestLocationsParams.pointsOfInterest_00.x,
-  pointsOfInterestLocationsParams.pointsOfInterest_00.y,
-  pointsOfInterestLocationsParams.pointsOfInterest_00.z
-);
-scene.add(testMesh_00);
+// const testMesh_00 = new THREE.Mesh(
+//   new THREE.SphereGeometry(0.03, 10, 10),
+//   new THREE.MeshNormalMaterial()
+// );
+// testMesh_00.position.set(
+//   pointsOfInterestLocationsParams.pointsOfInterest_00.x,
+//   pointsOfInterestLocationsParams.pointsOfInterest_00.y,
+//   pointsOfInterestLocationsParams.pointsOfInterest_00.z
+// );
+// scene.add(testMesh_00);
 
-const testMesh_01 = new THREE.Mesh(
-  new THREE.SphereGeometry(0.03, 10, 10),
-  new THREE.MeshNormalMaterial()
-);
-testMesh_01.position.set(
-  pointsOfInterestLocationsParams.pointsOfInterest_01.x,
-  pointsOfInterestLocationsParams.pointsOfInterest_01.y,
-  pointsOfInterestLocationsParams.pointsOfInterest_01.z
-);
-scene.add(testMesh_01);
+// const testMesh_01 = new THREE.Mesh(
+//   new THREE.SphereGeometry(0.03, 10, 10),
+//   new THREE.MeshNormalMaterial()
+// );
+// testMesh_01.position.set(
+//   pointsOfInterestLocationsParams.pointsOfInterest_01.x,
+//   pointsOfInterestLocationsParams.pointsOfInterest_01.y,
+//   pointsOfInterestLocationsParams.pointsOfInterest_01.z
+// );
+// scene.add(testMesh_01);
 
-const testMesh_02 = new THREE.Mesh(
-  new THREE.SphereGeometry(0.03, 10, 10),
-  new THREE.MeshNormalMaterial()
-);
-testMesh_02.position.set(
-  pointsOfInterestLocationsParams.pointsOfInterest_02.x,
-  pointsOfInterestLocationsParams.pointsOfInterest_02.y,
-  pointsOfInterestLocationsParams.pointsOfInterest_02.z
-);
-scene.add(testMesh_02);
+// const testMesh_02 = new THREE.Mesh(
+//   new THREE.SphereGeometry(0.03, 10, 10),
+//   new THREE.MeshNormalMaterial()
+// );
+// testMesh_02.position.set(
+//   pointsOfInterestLocationsParams.pointsOfInterest_02.x,
+//   pointsOfInterestLocationsParams.pointsOfInterest_02.y,
+//   pointsOfInterestLocationsParams.pointsOfInterest_02.z
+// );
+// scene.add(testMesh_02);
 
-const testMesh_03 = new THREE.Mesh(
-  new THREE.SphereGeometry(0.03, 10, 10),
-  new THREE.MeshNormalMaterial()
-);
-testMesh_03.position.set(
-  pointsOfInterestLocationsParams.pointsOfInterest_03.x,
-  pointsOfInterestLocationsParams.pointsOfInterest_03.y,
-  pointsOfInterestLocationsParams.pointsOfInterest_03.z
-);
-scene.add(testMesh_03);
+// const testMesh_03 = new THREE.Mesh(
+//   new THREE.SphereGeometry(0.03, 10, 10),
+//   new THREE.MeshNormalMaterial()
+// );
+// testMesh_03.position.set(
+//   pointsOfInterestLocationsParams.pointsOfInterest_03.x,
+//   pointsOfInterestLocationsParams.pointsOfInterest_03.y,
+//   pointsOfInterestLocationsParams.pointsOfInterest_03.z
+// );
+// scene.add(testMesh_03);
 
-const testMesh_04 = new THREE.Mesh(
-  new THREE.SphereGeometry(0.03, 10, 10),
-  new THREE.MeshNormalMaterial()
-);
-testMesh_04.position.set(
-  pointsOfInterestLocationsParams.pointsOfInterest_04.x,
-  pointsOfInterestLocationsParams.pointsOfInterest_04.y,
-  pointsOfInterestLocationsParams.pointsOfInterest_04.z
-);
-scene.add(testMesh_04);
+// const testMesh_04 = new THREE.Mesh(
+//   new THREE.SphereGeometry(0.03, 10, 10),
+//   new THREE.MeshNormalMaterial()
+// );
+// testMesh_04.position.set(
+//   pointsOfInterestLocationsParams.pointsOfInterest_04.x,
+//   pointsOfInterestLocationsParams.pointsOfInterest_04.y,
+//   pointsOfInterestLocationsParams.pointsOfInterest_04.z
+// );
+// scene.add(testMesh_04);
 
 // points of interests
 const offset = 0.1;
 const points = [
   {
     position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_00.x + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_00.y + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_00.z + offset
+      pointsOfInterestLocationsParams.pointsOfInterest_00.x,
+      pointsOfInterestLocationsParams.pointsOfInterest_00.y,
+      pointsOfInterestLocationsParams.pointsOfInterest_00.z
     ),
     element: document.querySelector(".point-0"),
   },
   {
     position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_01.x + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_01.y + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_01.z + offset
+      pointsOfInterestLocationsParams.pointsOfInterest_01.x,
+      pointsOfInterestLocationsParams.pointsOfInterest_01.y,
+      pointsOfInterestLocationsParams.pointsOfInterest_01.z
     ),
     element: document.querySelector(".point-1"),
   },
   {
     position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_02.x + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_02.y + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_02.z + offset
+      pointsOfInterestLocationsParams.pointsOfInterest_02.x,
+      pointsOfInterestLocationsParams.pointsOfInterest_02.y,
+      pointsOfInterestLocationsParams.pointsOfInterest_02.z
     ),
     element: document.querySelector(".point-2"),
   },
   {
     position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_03.x + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_03.y + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_03.z + offset
+      pointsOfInterestLocationsParams.pointsOfInterest_03.x,
+      pointsOfInterestLocationsParams.pointsOfInterest_03.y,
+      pointsOfInterestLocationsParams.pointsOfInterest_03.z
     ),
     element: document.querySelector(".point-3"),
   },
   {
     position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_04.x + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_04.y + offset,
-      pointsOfInterestLocationsParams.pointsOfInterest_04.z + offset
+      pointsOfInterestLocationsParams.pointsOfInterest_04.x,
+      pointsOfInterestLocationsParams.pointsOfInterest_04.y,
+      pointsOfInterestLocationsParams.pointsOfInterest_04.z
     ),
     element: document.querySelector(".point-4"),
   },
@@ -773,17 +774,6 @@ pointsOfInterestLocationFolder_04
   });
 
 /**
- * Lights ======================================================================
- */
-const directionalLight = new THREE.DirectionalLight("#ffffff", 3);
-directionalLight.castShadow = true;
-directionalLight.shadow.camera.far = 15;
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.normalBias = 0.05;
-directionalLight.position.set(0.25, 3, -2.25);
-scene.add(directionalLight);
-
-/**
  * Sizes =======================================================================
  */
 const sizes = {
@@ -836,7 +826,6 @@ const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
 });
-renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.useLegacyLights = false;
 renderer.toneMapping = THREE.ReinhardToneMapping;
 renderer.toneMappingExposure = 3;
@@ -900,42 +889,3 @@ const tick = () => {
 };
 
 tick();
-
-/**
- * Texture switch with keyboards =======================================================================
- */
-
-document.addEventListener("keydown", (e) => {
-  switch (event.keyCode) {
-    case 65: // a
-    case 37: // left arrow
-      if (matcapIndex !== 1) {
-        matcapIndex--;
-        matcapImage.src = matcapURLBase + matcapIndex + ".png";
-        console.log((matcapImage.src = matcapURLBase + matcapIndex + ".png"));
-        break;
-      } else {
-        matcapIndex = 12;
-        matcapImage.src = matcapURLBase + matcapIndex + ".png";
-        console.log((matcapImage.src = matcapURLBase + matcapIndex + ".png"));
-        break;
-      }
-
-    case 68: // d
-    case 39: //right arrow
-      if (matcapIndex !== 12) {
-        matcapIndex++;
-        matcapImage.src = matcapURLBase + matcapIndex + ".png";
-        console.log((matcapImage.src = matcapURLBase + matcapIndex + ".png"));
-        break;
-      } else {
-        matcapIndex = 1;
-        matcapImage.src = matcapURLBase + matcapIndex + ".png";
-        console.log((matcapImage.src = matcapURLBase + matcapIndex + ".png"));
-        break;
-      }
-
-    default:
-      break;
-  }
-});
