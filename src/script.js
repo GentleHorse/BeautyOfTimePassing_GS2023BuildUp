@@ -229,6 +229,7 @@ const glassBrickMaterial = new THREE.MeshPhysicalMaterial({
   transmission: 1,
   thickness: 0.5,
   envMap: hdrEquirect,
+  side: THREE.DoubleSide,
 });
 
 // glass brick light material
