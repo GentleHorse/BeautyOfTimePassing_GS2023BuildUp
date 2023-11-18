@@ -422,7 +422,7 @@ const pointsOfInterestLocationsParams = {
   pointsOfInterest_00: { x: 2.0, y: 0.3, z: -0.05 },
   pointsOfInterest_01: { x: 0.82, y: 0.57, z: -0.65 },
   pointsOfInterest_02: { x: 1.06, y: 0.35, z: -1.5 },
-  pointsOfInterest_03: { x: -1.49, y: 0.056, z: -2.01 },
+  pointsOfInterest_03: { x: -1.49, y: -0.4, z: -2.01 },
   pointsOfInterest_04: { x: -1.36, y: -0.316, z: -2.403 },
 };
 
