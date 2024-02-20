@@ -61,7 +61,7 @@ const textureLoader = new THREE.TextureLoader();
  * Base =================================================================
  */
 // Debug
-// const gui = new dat.GUI({ width: 400 });
+// const gui = new dat.GUI({ width: 300 });
 // gui.close();
 
 // Debug
@@ -159,30 +159,30 @@ const organicNormalTexture = textureLoader.load(
 /**
  * 3D Text ====================================================================
  */
-const fontLoader = new FontLoader();
+// const fontLoader = new FontLoader();
 
-fontLoader.load("/fonts/Vollkorn_Regular.json", (font) => {
-  const textGeometry = new TextGeometry("Beauty of Time Passing", {
-    font: font,
-    size: 0.1,
-    height: 0.2,
-    curveSegments: 5,
-    bevelEnabled: true,
-    bevelThickness: 0.03,
-    bevelSize: 0.02,
-    bevelOffset: 0,
-    bevelSegments: 4,
-  });
+// fontLoader.load("/fonts/Vollkorn_Regular.json", (font) => {
+//   const textGeometry = new TextGeometry("Beauty of Time Passing", {
+//     font: font,
+//     size: 0.1,
+//     height: 0.2,
+//     curveSegments: 5,
+//     bevelEnabled: true,
+//     bevelThickness: 0.03,
+//     bevelSize: 0.02,
+//     bevelOffset: 0,
+//     bevelSegments: 4,
+//   });
 
-  textGeometry.center();
+//   textGeometry.center();
 
-  const textMaterial = new THREE.MeshMatcapMaterial();
-  textMaterial.matcap = matcapTexture;
-  const text = new THREE.Mesh(textGeometry, textMaterial);
-  text.rotation.set(0, Math.PI, 0);
-  text.position.set(2.1, 1.6, 0.08);
-  scene.add(text);
-});
+//   const textMaterial = new THREE.MeshMatcapMaterial();
+//   textMaterial.matcap = matcapTexture;
+//   const text = new THREE.Mesh(textGeometry, textMaterial);
+//   text.rotation.set(0, Math.PI, 0);
+//   text.position.set(2.1, 1.6, 0.08);
+//   scene.add(text);
+// });
 
 /**
  * Models =====================================================================
@@ -416,60 +416,60 @@ glassBricksMeshGroup_01.rotation.y = 2.736;
  * Points of interest ==========================================================
  */
 
-const raycaster = new THREE.Raycaster();
+// const raycaster = new THREE.Raycaster();
 
-const pointsOfInterestLocationsParams = {
-  pointsOfInterest_00: { x: 2.0, y: 0.3, z: -0.05 },
-  pointsOfInterest_01: { x: 0.82, y: 0.57, z: -0.65 },
-  pointsOfInterest_02: { x: 1.06, y: 0.35, z: -1.5 },
-  pointsOfInterest_03: { x: -1.49, y: -0.4, z: -2.01 },
-  pointsOfInterest_04: { x: -1.36, y: -0.316, z: -2.403 },
-};
+// const pointsOfInterestLocationsParams = {
+//   pointsOfInterest_00: { x: 2.0, y: 0.3, z: -0.05 },
+//   pointsOfInterest_01: { x: 0.82, y: 0.57, z: -0.65 },
+//   pointsOfInterest_02: { x: 1.06, y: 0.35, z: -1.5 },
+//   pointsOfInterest_03: { x: -1.49, y: -0.4, z: -2.01 },
+//   pointsOfInterest_04: { x: -1.36, y: -0.316, z: -2.403 },
+// };
 
-// points of interests
-const offset = 0.1;
-const points = [
-  {
-    position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_00.x,
-      pointsOfInterestLocationsParams.pointsOfInterest_00.y,
-      pointsOfInterestLocationsParams.pointsOfInterest_00.z
-    ),
-    element: document.querySelector(".point-0"),
-  },
-  {
-    position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_01.x,
-      pointsOfInterestLocationsParams.pointsOfInterest_01.y,
-      pointsOfInterestLocationsParams.pointsOfInterest_01.z
-    ),
-    element: document.querySelector(".point-1"),
-  },
-  {
-    position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_02.x,
-      pointsOfInterestLocationsParams.pointsOfInterest_02.y,
-      pointsOfInterestLocationsParams.pointsOfInterest_02.z
-    ),
-    element: document.querySelector(".point-2"),
-  },
-  {
-    position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_03.x,
-      pointsOfInterestLocationsParams.pointsOfInterest_03.y,
-      pointsOfInterestLocationsParams.pointsOfInterest_03.z
-    ),
-    element: document.querySelector(".point-3"),
-  },
-  {
-    position: new THREE.Vector3(
-      pointsOfInterestLocationsParams.pointsOfInterest_04.x,
-      pointsOfInterestLocationsParams.pointsOfInterest_04.y,
-      pointsOfInterestLocationsParams.pointsOfInterest_04.z
-    ),
-    element: document.querySelector(".point-4"),
-  },
-];
+// // points of interests
+// const offset = 0.1;
+// const points = [
+//   {
+//     position: new THREE.Vector3(
+//       pointsOfInterestLocationsParams.pointsOfInterest_00.x,
+//       pointsOfInterestLocationsParams.pointsOfInterest_00.y,
+//       pointsOfInterestLocationsParams.pointsOfInterest_00.z
+//     ),
+//     element: document.querySelector(".point-0"),
+//   },
+//   {
+//     position: new THREE.Vector3(
+//       pointsOfInterestLocationsParams.pointsOfInterest_01.x,
+//       pointsOfInterestLocationsParams.pointsOfInterest_01.y,
+//       pointsOfInterestLocationsParams.pointsOfInterest_01.z
+//     ),
+//     element: document.querySelector(".point-1"),
+//   },
+//   {
+//     position: new THREE.Vector3(
+//       pointsOfInterestLocationsParams.pointsOfInterest_02.x,
+//       pointsOfInterestLocationsParams.pointsOfInterest_02.y,
+//       pointsOfInterestLocationsParams.pointsOfInterest_02.z
+//     ),
+//     element: document.querySelector(".point-2"),
+//   },
+//   {
+//     position: new THREE.Vector3(
+//       pointsOfInterestLocationsParams.pointsOfInterest_03.x,
+//       pointsOfInterestLocationsParams.pointsOfInterest_03.y,
+//       pointsOfInterestLocationsParams.pointsOfInterest_03.z
+//     ),
+//     element: document.querySelector(".point-3"),
+//   },
+//   {
+//     position: new THREE.Vector3(
+//       pointsOfInterestLocationsParams.pointsOfInterest_04.x,
+//       pointsOfInterestLocationsParams.pointsOfInterest_04.y,
+//       pointsOfInterestLocationsParams.pointsOfInterest_04.z
+//     ),
+//     element: document.querySelector(".point-4"),
+//   },
+// ];
 
 /**
  * Sizes =======================================================================
@@ -503,7 +503,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(3.986, 0.335, -2.272);
+camera.position.set(2.916, 1.876, -2.783);
 scene.add(camera);
 
 // Controls
@@ -547,33 +547,33 @@ const tick = () => {
   glassBrickLightMaterial.uniforms.uTime.value = elapsedTime;
   projectorLightMaterial.uniforms.uTime.value = elapsedTime;
 
-  if (isSceneReady) {
-    // Go through each point
-    for (const point of points) {
-      const screenPosition = point.position.clone();
-      screenPosition.project(camera);
+  // if (isSceneReady) {
+  //   // Go through each point
+  //   for (const point of points) {
+  //     const screenPosition = point.position.clone();
+  //     screenPosition.project(camera);
 
-      raycaster.setFromCamera(screenPosition, camera);
-      const intersects = raycaster.intersectObjects(scene.children, true);
+  //     raycaster.setFromCamera(screenPosition, camera);
+  //     const intersects = raycaster.intersectObjects(scene.children, true);
 
-      if (intersects.length === 0) {
-        point.element.classList.add("visible");
-      } else {
-        const intersectionDistance = intersects[0].distance;
-        const pointDistance = point.position.distanceTo(camera.position);
+  //     if (intersects.length === 0) {
+  //       point.element.classList.add("visible");
+  //     } else {
+  //       const intersectionDistance = intersects[0].distance;
+  //       const pointDistance = point.position.distanceTo(camera.position);
 
-        if (intersectionDistance < pointDistance) {
-          point.element.classList.remove("visible");
-        } else {
-          point.element.classList.add("visible");
-        }
-      }
+  //       if (intersectionDistance < pointDistance) {
+  //         point.element.classList.remove("visible");
+  //       } else {
+  //         point.element.classList.add("visible");
+  //       }
+  //     }
 
-      const translateX = screenPosition.x * sizes.width * 0.5;
-      const translateY = -screenPosition.y * sizes.height * 0.5;
-      point.element.style.transform = `translate(${translateX}px, ${translateY}px)`;
-    }
-  }
+  //     const translateX = screenPosition.x * sizes.width * 0.5;
+  //     const translateY = -screenPosition.y * sizes.height * 0.5;
+  //     point.element.style.transform = `translate(${translateX}px, ${translateY}px)`;
+  //   }
+  // }
 
   // Render
   renderer.render(scene, camera);
